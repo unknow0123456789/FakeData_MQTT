@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:backgroundTint="@color/white"
+    tools:context=".MainActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:id="@+id/ConnectLayout"
+        >
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="IP Address of the MQTT broker"
+            android:layout_centerInParent="true"
+            android:textColor="@color/black"
+            android:textColorHint="@color/cardview_dark_background"
+            android:layout_margin="10dp"
+            android:id="@+id/BrokerIPBox"
+            ></EditText>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Connect"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/black"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/BrokerIPBox"
+            android:id="@+id/ConnectToMqttBTN"
+            ></Button>
+
+    </RelativeLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ScrollToRecycle"
+        android:background="@color/white"
+        android:visibility="gone"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/Publisher_recyclerView"
+                ></androidx.recyclerview.widget.RecyclerView>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/AddTopicBTN"
+                android:text="Add Topic"
+                android:textColor="@color/white"
+                android:textSize="@dimen/MessageBoxTextSize"
+                android:textStyle="bold"
+                android:backgroundTint="@color/black"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/Publisher_recyclerView"
+                ></Button>
+        </RelativeLayout>
+        </ScrollView>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

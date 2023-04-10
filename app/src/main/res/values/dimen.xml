@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="MessageBoxTextSize">25dp</dimen>
+    <dimen name="CardAttrHorMargin">5dp</dimen>
+    <dimen name="CardAttrVerMargin">5dp</dimen>
+</resources>
