@@ -9,6 +9,9 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.json.JSONObject;
+
+import java.nio.charset.StandardCharsets;
 
 public class MQTTHandler {
 
@@ -47,7 +50,15 @@ public class MQTTHandler {
 
     public void publish(String topic, String message) {
         try {
-            MqttMessage mqttMessage = new MqttMessage(message.getBytes());
+            MqttMessage mqttMessage = new MqttMessage(message.getBytes(StandardCharsets.UTF_8));
+            client.publish(topic, mqttMessage);
+        } catch (MqttException e) {
+            Log.e("MqttPub", e.fillInStackTrace()+"");
+        }
+    }
+    public void publish(String topic, JSONObject message) {
+        try {
+            MqttMessage mqttMessage = new MqttMessage(message.toString().getBytes(StandardCharsets.UTF_8));
             client.publish(topic, mqttMessage);
         } catch (MqttException e) {
             Log.e("MqttPub", e.fillInStackTrace()+"");
