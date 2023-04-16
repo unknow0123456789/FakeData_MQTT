@@ -6,6 +6,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -43,10 +44,8 @@ public class MessageBox_RecyclerviewAdapter extends RecyclerView.Adapter<Message
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.message_box,parent,false);
         return new MessageBoxViewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(@NonNull MessageBoxViewHolder holder, int position) {
-        State1(holder);
         holder.MessageBox_NAME.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -82,12 +81,12 @@ public class MessageBox_RecyclerviewAdapter extends RecyclerView.Adapter<Message
         holder.MessageBox_DEL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                State1(holder);
                 CurrentMessageBox=holder.getAdapterPosition();
                 CR.OnResponse(null);
             }
         });
     }
-
     @Override
     public int getItemCount() {
         return MessageControlList.size();
@@ -95,7 +94,7 @@ public class MessageBox_RecyclerviewAdapter extends RecyclerView.Adapter<Message
 
     public class MessageBoxViewHolder  extends RecyclerView.ViewHolder{
         EditText MessageBox_NAME,MessageBox_VALUE;
-        ImageButton MessageBox_DEL;
+        Button MessageBox_DEL;
         public MessageBoxViewHolder(@NonNull View itemView) {
             super(itemView);
             MessageBox_NAME=itemView.findViewById(R.id.Message_Name);

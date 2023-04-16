@@ -2,7 +2,9 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="@dimen/MessageBox_ConnerRadius"
+    >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -11,25 +13,21 @@
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="1.5"
             android:layout_marginHorizontal="@dimen/MessageBox_Margin"
             >
-            <androidx.cardview.widget.CardView
+            <EditText
+                android:id="@+id/Message_Name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/round_shape"
                 android:backgroundTint="@color/white"
-                app:cardCornerRadius="@dimen/MessageBox_ConnerRadius"
                 android:layout_centerInParent="true"
-                android:padding="@dimen/MessageBox_Padding"
-                >
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white"
-                    android:textSize="@dimen/MessageBoxTextSize"
-                    android:id="@+id/Message_Name"
-                    ></EditText>
-            </androidx.cardview.widget.CardView>
+                android:hint="Name"
+                android:textSize="@dimen/MessageBoxTextSize"
+                android:textColor="@color/black"
+                android:padding="5dp"
+                ></EditText>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="0dp"
@@ -37,37 +35,35 @@
             android:layout_weight="3"
             android:layout_marginHorizontal="@dimen/MessageBox_Margin"
             >
-            <androidx.cardview.widget.CardView
+            <EditText
+                android:id="@+id/Message_Value"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/round_shape"
                 android:backgroundTint="@color/white"
-                app:cardCornerRadius="@dimen/MessageBox_ConnerRadius"
                 android:layout_centerInParent="true"
-                android:padding="@dimen/MessageBox_Padding"
-                >
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white"
-                    android:textSize="@dimen/MessageBoxTextSize"
-                    android:id="@+id/Message_Value"
-                    ></EditText>
-            </androidx.cardview.widget.CardView>
+                android:hint="Value"
+                android:textSize="@dimen/MessageBoxTextSize"
+                android:textColor="@color/black"
+                android:padding="5dp"
+                ></EditText>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="1.5"
+            android:background="@color/black"
             >
-            <ImageButton
+            <Button
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/bin"
-                android:scaleType="fitXY"
-                android:backgroundTint="?selectableItemBackgroundBorderless"
-                android:background="@drawable/round_shape"
                 android:id="@+id/Message_Del"
-                ></ImageButton>
+                android:text="Del"
+                android:textSize="@dimen/MessageBoxTextSize"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:background="?selectableItemBackgroundBorderless"
+                ></Button>
         </RelativeLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

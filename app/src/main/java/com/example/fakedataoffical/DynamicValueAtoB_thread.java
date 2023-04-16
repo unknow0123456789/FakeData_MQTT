@@ -39,7 +39,7 @@ public class DynamicValueAtoB_thread extends Thread{
                 else dataToValueA=dataToValueB;
             }
             client.publish(Topic,String.valueOf(dataToValueA));
-            MH.PublishedMessage.add(String.valueOf(dataToValueA));
+            //MH.PublishedMessage.add(String.valueOf(dataToValueA));
             try
             {
                 sleep(100);

@@ -16,16 +16,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adapter.MessageViewHolder> {
+public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adapter.MessageViewHolder> implements CustomResponseCallBack{
 
     ArrayList<MessageHistory> MHList;
     Context mContext;
     MQTTHandler client;
     CustomResponseCallBack CR;
+    MessageBox_RecyclerviewAdapter MessageBoxAdapter;
     public int currentlyUsePOS;
 
     public RecyclerView_Adapter(Context mContext, MQTTHandler mqttHandler, ArrayList<MessageHistory> mhlist,CustomResponseCallBack cr) {
@@ -50,6 +52,21 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
      */
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
+
+        //MessageBox_Config
+        MessageBoxAdapter=new MessageBox_RecyclerviewAdapter(mContext,this);
+        LinearLayoutManager linearLayoutManager= new LinearLayoutManager(mContext,RecyclerView.VERTICAL,false);
+        holder.messageBoxes.setLayoutManager(linearLayoutManager);
+        holder.messageBoxes.setDescendantFocusability(holder.messageBoxes.FOCUS_BEFORE_DESCENDANTS); //TODO:SHOULD USE IF RECYCLERVIEW CONTAIN AN EDIT TEXT
+        holder.messageBoxes.setAdapter(MessageBoxAdapter);
+        holder.ADDMessageBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MessageBoxAdapter.addMessageBox();
+            }
+        });
+        //MessageBox_EndConfig
+
         Log.d("testF", "bindingRuningat: "+position);
         MessageHistory MH=MHList.get(holder.getAdapterPosition());
         Log.d("testF", "holder.getAdapterPos: "+holder.getAdapterPosition());
@@ -83,11 +100,15 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
             holder.PubBTN.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String Message=holder.inputMessage.getText().toString();
-                    Log.e("testF_EditText", Message);
-                    client.publish(MH.Topic, Message);
-                    MH.PublishedMessage.add(Message);
-                    holder.inputMessage.setText("");
+                    ArrayList<JsonPropertyMinimal> MessageFull=MessageBoxAdapter.MessageControlList;
+                    MH.PublishedMessage.add(
+                            client.publish(MH.Topic, MessageFull)
+                            );
+                    for (int i=0;i<MessageBoxAdapter.getItemCount();i++)
+                    {
+                        MessageBox_RecyclerviewAdapter.MessageBoxViewHolder VH=(MessageBox_RecyclerviewAdapter.MessageBoxViewHolder) holder.messageBoxes.findViewHolderForAdapterPosition(i);
+                        MessageBoxAdapter.State1(VH);
+                    }
                 }
             });
             holder.DelBTN.setOnClickListener(new View.OnClickListener() {
@@ -106,84 +127,84 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
                 }
             });
         }
-        holder.PubABTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(holder.PubABTN.getText().equals("PubA"))
-                {
-                    if(holder.staticValue_thread==null)
-                    {
-                        holder.AsyncFlag=true;
-                        String RepeatMessage=holder.inputMessage.getText().toString();
-                        holder.inputMessage.setText("");
-                        holder.DelBTN.setEnabled(false);
-                        holder.PubBTN.setEnabled(false);
-                        holder.PubABTN.setText("Stop");
-                        holder.staticValue_thread=new StaticValue_thread(MH.Topic,RepeatMessage,client,MH);
-                        holder.staticValue_thread.start();
-                    }
-                    else
-                    {
-                        String dataA=holder.staticValue_thread.data;
-                        String dataB=holder.inputMessage.getText().toString();
-                        holder.staticValue_thread.StopSign();
-                        holder.PubBTN.setEnabled(false);
-                        holder.DelBTN.setEnabled(false);
-                        holder.PubABTN.setEnabled(false);
-                        holder.inputMessage.setText("StandBy while Data is being Shifted");
-                        holder.inputMessage.setEnabled(false);
-                        DynamicValueAtoB_thread dynamicValueAtoB_thread=new DynamicValueAtoB_thread(MH.Topic, dataA, dataB, client, MH, holder.staticValue_thread, holder, new CustomResponseCallBack() {
-                            @Override
-                            public void OnResponse(Object obj) {
-                                ((Activity)mContext).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        holder.inputMessage.setEnabled(true);
-                                        holder.PubBTN.setEnabled(false);
-                                        holder.DelBTN.setEnabled(false);
-                                        holder.PubABTN.setEnabled(true);
-                                        holder.PubABTN.setText("Stop");
-                                        holder.inputMessage.setText("");
-                                    }
-                                });
-                                holder.staticValue_thread.run();
-                            }
-                        });
-                        dynamicValueAtoB_thread.start();
-                    }
-                }
-                else
-                {
-                    holder.AsyncFlag=false;
-                    holder.staticValue_thread.StopSign();
-                    holder.DelBTN.setEnabled(true);
-                    holder.PubBTN.setEnabled(true);
-                    holder.PubABTN.setText("PubA");
-                    holder.staticValue_thread=null;
-                }
-            }
-        });
-        holder.inputMessage.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(holder.AsyncFlag==true)
-                {
-                    if (s.toString().trim().isEmpty()) {
-                        holder.PubABTN.setText("Stop");
-                    }
-                    else holder.PubABTN.setText("PubA");
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
+//        holder.PubABTN.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(holder.PubABTN.getText().equals("PubA"))
+//                {
+//                    if(holder.staticValue_thread==null)
+//                    {
+//                        holder.AsyncFlag=true;
+//                        String RepeatMessage=holder.inputMessage.getText().toString();
+//                        holder.inputMessage.setText("");
+//                        holder.DelBTN.setEnabled(false);
+//                        holder.PubBTN.setEnabled(false);
+//                        holder.PubABTN.setText("Stop");
+//                        holder.staticValue_thread=new StaticValue_thread(MH.Topic,RepeatMessage,client,MH);
+//                        holder.staticValue_thread.start();
+//                    }
+//                    else
+//                    {
+//                        String dataA=holder.staticValue_thread.data;
+//                        String dataB=holder.inputMessage.getText().toString();
+//                        holder.staticValue_thread.StopSign();
+//                        holder.PubBTN.setEnabled(false);
+//                        holder.DelBTN.setEnabled(false);
+//                        holder.PubABTN.setEnabled(false);
+//                        holder.inputMessage.setText("StandBy while Data is being Shifted");
+//                        holder.inputMessage.setEnabled(false);
+//                        DynamicValueAtoB_thread dynamicValueAtoB_thread=new DynamicValueAtoB_thread(MH.Topic, dataA, dataB, client, MH, holder.staticValue_thread, holder, new CustomResponseCallBack() {
+//                            @Override
+//                            public void OnResponse(Object obj) {
+//                                ((Activity)mContext).runOnUiThread(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        holder.inputMessage.setEnabled(true);
+//                                        holder.PubBTN.setEnabled(false);
+//                                        holder.DelBTN.setEnabled(false);
+//                                        holder.PubABTN.setEnabled(true);
+//                                        holder.PubABTN.setText("Stop");
+//                                        holder.inputMessage.setText("");
+//                                    }
+//                                });
+//                                holder.staticValue_thread.run();
+//                            }
+//                        });
+//                        dynamicValueAtoB_thread.start();
+//                    }
+//                }
+//                else
+//                {
+//                    holder.AsyncFlag=false;
+//                    holder.staticValue_thread.StopSign();
+//                    holder.DelBTN.setEnabled(true);
+//                    holder.PubBTN.setEnabled(true);
+//                    holder.PubABTN.setText("PubA");
+//                    holder.staticValue_thread=null;
+//                }
+//            }
+//        });
+//        holder.inputMessage.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                if(holder.AsyncFlag==true)
+//                {
+//                    if (s.toString().trim().isEmpty()) {
+//                        holder.PubABTN.setText("Stop");
+//                    }
+//                    else holder.PubABTN.setText("PubA");
+//                }
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//            }
+//        });
     }
 
     @Override
@@ -201,6 +222,7 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
         holder.DelBTN.setVisibility(View.VISIBLE);
         holder.PubBTN.setVisibility(View.VISIBLE);
         holder.PubABTN.setVisibility(View.VISIBLE);
+        holder.ADDMessageBox.setVisibility(View.VISIBLE);
     }
 
     private void ReverseStage1(MessageViewHolder holder)
@@ -212,11 +234,13 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
         holder.DelBTN.setVisibility(View.GONE);
         holder.PubBTN.setVisibility(View.GONE);
         holder.PubABTN.setVisibility(View.GONE);
+        holder.ADDMessageBox.setVisibility(View.GONE);
     }
+
     public class MessageViewHolder extends RecyclerView.ViewHolder {
         EditText TopicTitle;
         RecyclerView messageBoxes;
-        Button PubBTN, DelBTN, LockTopicBTN,PubABTN;
+        Button PubBTN, DelBTN, LockTopicBTN,PubABTN,ADDMessageBox;
         StaticValue_thread staticValue_thread;
         boolean AsyncFlag;
         public MessageViewHolder(@NonNull View itemView) {
@@ -227,7 +251,17 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
             DelBTN=itemView.findViewById(R.id.Card_DeleteCardBTN);
             PubABTN=itemView.findViewById(R.id.Card_PubAsyncBTN);
             LockTopicBTN =itemView.findViewById(R.id.Card_LockBTN);
+            ADDMessageBox=itemView.findViewById(R.id.Card_AddMessage);
             AsyncFlag=false;
         }
+    }
+    @Override
+    public void OnResponse(Object obj) {
+        int pos=MessageBoxAdapter.CurrentMessageBox;
+        if(pos!=-1){
+            MessageBoxAdapter.MessageControlList.remove(pos);
+            MessageBoxAdapter.notifyItemRemoved(pos);
+        }
+
     }
 }

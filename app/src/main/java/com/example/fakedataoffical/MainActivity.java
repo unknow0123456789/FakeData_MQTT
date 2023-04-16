@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements CustomResponseCal
         adapter=new RecyclerView_Adapter(this, client,MHList,this);
         LinearLayoutManager linearLayoutManager= new LinearLayoutManager(this,RecyclerView.VERTICAL,false);
         PubListView.setLayoutManager(linearLayoutManager);
-        PubListView.setDescendantFocusability(PubListView.FOCUS_BEFORE_DESCENDANTS);
+        PubListView.setDescendantFocusability(PubListView.FOCUS_BEFORE_DESCENDANTS); //TODO:SHOULD USE IF RECYCLERVIEW CONTAIN AN EDIT TEXT
         PubListView.setAdapter(adapter);
 
 

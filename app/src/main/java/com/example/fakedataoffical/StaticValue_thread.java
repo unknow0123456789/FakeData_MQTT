@@ -22,7 +22,7 @@ public class StaticValue_thread extends Thread{
         {
             Log.d("testAsync", "Static_run: ");
             client.publish(Topic,data);
-            MH.PublishedMessage.add(data);
+            //MH.PublishedMessage.add(data);
         }
     }
     public void StopSign()
