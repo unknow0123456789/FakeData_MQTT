@@ -3,4 +3,7 @@
     <dimen name="MessageBoxTextSize">25dp</dimen>
     <dimen name="CardAttrHorMargin">5dp</dimen>
     <dimen name="CardAttrVerMargin">5dp</dimen>
+    <dimen name="MessageBox_Padding">5dp</dimen>
+    <dimen name="MessageBox_ConnerRadius">20dp</dimen>
+    <dimen name="MessageBox_Margin">5dp</dimen>
 </resources>

@@ -39,18 +39,25 @@
             android:layout_centerHorizontal="true"
             android:backgroundTint="@color/black"
             ></Button>
-        <EditText
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/MessageBoxTextSize"
             android:layout_marginHorizontal="@dimen/CardAttrHorMargin"
             android:layout_marginVertical="@dimen/CardAttrVerMargin"
-            android:id="@+id/Card_MessageBox"
-            android:hint="Message"
-            android:textAlignment="center"
+            android:id="@+id/Card_RecyclerMessageBox"
             android:layout_below="@id/Card_LockBTN"
             android:visibility="gone"
-            ></EditText>
+            ></androidx.recyclerview.widget.RecyclerView>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/Card_RecyclerMessageBox"
+            android:id="@+id/Card_AddMessage"
+            android:backgroundTint="@color/black"
+            android:text="Add Message"
+            android:visibility="gone"
+            ></Button>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,7 +72,7 @@
             android:fontFamily="sans-serif-smallcaps"
             android:id="@+id/Card_PublishBTN"
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/Card_MessageBox"
+            android:layout_below="@id/Card_AddMessage"
             android:visibility="gone"
             ></Button>
         <Button
@@ -80,7 +87,7 @@
             android:textStyle="bold"
             android:fontFamily="sans-serif-smallcaps"
             android:id="@+id/Card_DeleteCardBTN"
-            android:layout_below="@id/Card_MessageBox"
+            android:layout_below="@id/Card_AddMessage"
             android:layout_toRightOf="@id/Card_PublishBTN"
             android:backgroundTint="@color/black"
             android:visibility="gone"
@@ -97,7 +104,7 @@
             android:textStyle="bold"
             android:fontFamily="sans-serif-smallcaps"
             android:id="@+id/Card_PubAsyncBTN"
-            android:layout_below="@id/Card_MessageBox"
+            android:layout_below="@id/Card_AddMessage"
             android:layout_toLeftOf="@id/Card_PublishBTN"
             android:backgroundTint="@color/black"
             android:visibility="gone"

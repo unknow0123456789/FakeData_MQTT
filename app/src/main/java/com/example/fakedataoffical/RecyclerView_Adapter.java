@@ -33,6 +33,8 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
         this.MHList=mhlist;
         this.CR=cr;
         this.client=mqttHandler;
+        RecyclerView test;
+
     }
 
 
@@ -128,7 +130,7 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
                         holder.PubBTN.setEnabled(false);
                         holder.DelBTN.setEnabled(false);
                         holder.PubABTN.setEnabled(false);
-                        holder.inputMessage.setText("StandBy while the Data is Shifting");
+                        holder.inputMessage.setText("StandBy while Data is being Shifted");
                         holder.inputMessage.setEnabled(false);
                         DynamicValueAtoB_thread dynamicValueAtoB_thread=new DynamicValueAtoB_thread(MH.Topic, dataA, dataB, client, MH, holder.staticValue_thread, holder, new CustomResponseCallBack() {
                             @Override
@@ -195,7 +197,7 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
         holder.TopicTitle.setText(holder.TopicTitle.getText());
         holder.TopicTitle.setEnabled(false);
         holder.LockTopicBTN.setVisibility(View.GONE);
-        holder.inputMessage.setVisibility(View.VISIBLE);
+        holder.messageBoxes.setVisibility(View.VISIBLE);
         holder.DelBTN.setVisibility(View.VISIBLE);
         holder.PubBTN.setVisibility(View.VISIBLE);
         holder.PubABTN.setVisibility(View.VISIBLE);
@@ -206,20 +208,21 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
         holder.TopicTitle.setText("");
         holder.TopicTitle.setEnabled(true);
         holder.LockTopicBTN.setVisibility(View.VISIBLE);
-        holder.inputMessage.setVisibility(View.GONE);
+        holder.messageBoxes.setVisibility(View.GONE);
         holder.DelBTN.setVisibility(View.GONE);
         holder.PubBTN.setVisibility(View.GONE);
         holder.PubABTN.setVisibility(View.GONE);
     }
     public class MessageViewHolder extends RecyclerView.ViewHolder {
-        EditText inputMessage,TopicTitle;
+        EditText TopicTitle;
+        RecyclerView messageBoxes;
         Button PubBTN, DelBTN, LockTopicBTN,PubABTN;
         StaticValue_thread staticValue_thread;
         boolean AsyncFlag;
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
             TopicTitle=itemView.findViewById(R.id.Card_TopicBox);
-            inputMessage=itemView.findViewById(R.id.Card_MessageBox);
+            messageBoxes=itemView.findViewById(R.id.Card_RecyclerMessageBox);
             PubBTN=itemView.findViewById(R.id.Card_PublishBTN);
             DelBTN=itemView.findViewById(R.id.Card_DeleteCardBTN);
             PubABTN=itemView.findViewById(R.id.Card_PubAsyncBTN);
