@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements CustomResponseCal
         adapter=new RecyclerView_Adapter(this, client,MHList,this);
         LinearLayoutManager linearLayoutManager= new LinearLayoutManager(this,RecyclerView.VERTICAL,false);
         PubListView.setLayoutManager(linearLayoutManager);
-        PubListView.setDescendantFocusability(PubListView.FOCUS_BEFORE_DESCENDANTS);
+        PubListView.setDescendantFocusability(PubListView.FOCUS_BEFORE_DESCENDANTS); //TODO:SHOULD USE IF RECYCLERVIEW CONTAIN AN EDIT TEXT
         PubListView.setAdapter(adapter);
 
 
@@ -63,7 +63,8 @@ public class MainActivity extends AppCompatActivity implements CustomResponseCal
                 Log.d("testF", "bfADD: "+adapter.getItemCount());
                 int bfADD=adapter.getItemCount();
                 MHList.add(new MessageHistory());
-                adapter.notifyDataSetChanged();
+                //adapter.notifyDataSetChanged();
+                adapter.notifyItemInserted(adapter.getItemCount()); //TODO: this is better than using notifyDataSetChange(); because notifyDataSetChange() might make your data to change uncontrollably and should only be use if u need to set the inner list as a brand new list and not just adding an item
                 //adapter.notifyItemRangeChanged(bfADD,MHList.size());
                 Log.d("testF", "atADD: "+adapter.getItemCount());
                 for(int i=0;i<MHList.size();i++)
@@ -116,6 +117,11 @@ public class MainActivity extends AppCompatActivity implements CustomResponseCal
         if(pos>-1 && pos < MHList.size())
         {
             Log.d("testF", "bfDEL: "+adapter.getItemCount());
+            if(MHList.size()==1)
+            {
+                View viewToRemove = PubListView.getChildAt(pos);
+                PubListView.removeViewAt(pos);
+            }
             MHList.remove(pos);
             adapter.notifyItemRemoved(pos);
             Log.d("testF", "atDEL: "+adapter.getItemCount());
