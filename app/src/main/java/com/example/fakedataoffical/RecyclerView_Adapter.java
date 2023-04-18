@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adapter.MessageViewHolder> implements CustomResponseCallBack{
 
@@ -54,7 +55,50 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
 
         //MessageBox_Config
-        MessageBoxAdapter=new MessageBox_RecyclerviewAdapter(mContext,this);
+        MessageBoxAdapter=new MessageBox_RecyclerviewAdapter(mContext, this, new CustomResponseCallBack() {
+            @Override
+            public void OnResponse(Object obj) {
+                if(holder.AsyncFlag==true)
+                {
+                    ArrayList<JsonPropertyMinimal> SampleList=new ArrayList<>();
+                    for (JsonPropertyMinimal JPM:
+                         MessageBoxAdapter.MessageControlList) {
+                        SampleList.add(JPM.CreateDeepClone());
+                    }
+                    boolean CheckChangeFlag=false;
+                    for(int i=0;i<SampleList.size();i++)
+                    {
+                        JsonPropertyMinimal SampleFromStaticThreadAtI=holder.staticValue_thread.data.get(i).CreateDeepClone();
+                        if(!SampleList.get(i).VALUE.equals("")&&!SampleList.get(i).VALUE.equals(SampleFromStaticThreadAtI.VALUE))
+                        {
+                            CheckChangeFlag=true;
+                        }
+                    }
+                    if(CheckChangeFlag==true)
+                    {
+                        ArrayList<JsonPropertyMinimal> CloneListA=new ArrayList<>();
+                        for (JsonPropertyMinimal JPM:
+                                holder.staticValue_thread.data) {
+                            CloneListA.add(JPM.CreateDeepClone());
+                        }
+                        for(int t=0;t<CloneListA.size();t++)
+                        {
+                            if(!SampleList.get(t).VALUE.equals(""))
+                            {
+                                SampleList.get(t).NAME=CloneListA.get(t).NAME;
+                                CloneListA.set(t,SampleList.get(t));
+                            }
+                        }
+                        holder.DataB=CloneListA;
+                        holder.PubABTN.setText("PubA");
+                    }
+                    else
+                        holder.PubABTN.setText("Stop");
+                }
+            }
+        });
+
+        //reset to new set of MessageBox
         LinearLayoutManager linearLayoutManager= new LinearLayoutManager(mContext,RecyclerView.VERTICAL,false);
         holder.messageBoxes.setLayoutManager(linearLayoutManager);
         holder.messageBoxes.setDescendantFocusability(holder.messageBoxes.FOCUS_BEFORE_DESCENDANTS); //TODO:SHOULD USE IF RECYCLERVIEW CONTAIN AN EDIT TEXT
@@ -104,11 +148,7 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
                     MH.PublishedMessage.add(
                             client.publish(MH.Topic, MessageFull)
                             );
-                    for (int i=0;i<MessageBoxAdapter.getItemCount();i++)
-                    {
-                        MessageBox_RecyclerviewAdapter.MessageBoxViewHolder VH=(MessageBox_RecyclerviewAdapter.MessageBoxViewHolder) holder.messageBoxes.findViewHolderForAdapterPosition(i);
-                        MessageBoxAdapter.State1(VH);
-                    }
+                    ResetMessageBoxesState(holder);
                 }
             });
             holder.DelBTN.setOnClickListener(new View.OnClickListener() {
@@ -127,63 +167,81 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
                 }
             });
         }
-//        holder.PubABTN.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(holder.PubABTN.getText().equals("PubA"))
-//                {
-//                    if(holder.staticValue_thread==null)
-//                    {
-//                        holder.AsyncFlag=true;
-//                        String RepeatMessage=holder.inputMessage.getText().toString();
-//                        holder.inputMessage.setText("");
-//                        holder.DelBTN.setEnabled(false);
-//                        holder.PubBTN.setEnabled(false);
-//                        holder.PubABTN.setText("Stop");
-//                        holder.staticValue_thread=new StaticValue_thread(MH.Topic,RepeatMessage,client,MH);
-//                        holder.staticValue_thread.start();
-//                    }
-//                    else
-//                    {
-//                        String dataA=holder.staticValue_thread.data;
-//                        String dataB=holder.inputMessage.getText().toString();
-//                        holder.staticValue_thread.StopSign();
-//                        holder.PubBTN.setEnabled(false);
-//                        holder.DelBTN.setEnabled(false);
-//                        holder.PubABTN.setEnabled(false);
-//                        holder.inputMessage.setText("StandBy while Data is being Shifted");
-//                        holder.inputMessage.setEnabled(false);
-//                        DynamicValueAtoB_thread dynamicValueAtoB_thread=new DynamicValueAtoB_thread(MH.Topic, dataA, dataB, client, MH, holder.staticValue_thread, holder, new CustomResponseCallBack() {
-//                            @Override
-//                            public void OnResponse(Object obj) {
-//                                ((Activity)mContext).runOnUiThread(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        holder.inputMessage.setEnabled(true);
-//                                        holder.PubBTN.setEnabled(false);
-//                                        holder.DelBTN.setEnabled(false);
-//                                        holder.PubABTN.setEnabled(true);
-//                                        holder.PubABTN.setText("Stop");
-//                                        holder.inputMessage.setText("");
-//                                    }
-//                                });
-//                                holder.staticValue_thread.run();
-//                            }
-//                        });
-//                        dynamicValueAtoB_thread.start();
-//                    }
-//                }
-//                else
-//                {
-//                    holder.AsyncFlag=false;
-//                    holder.staticValue_thread.StopSign();
-//                    holder.DelBTN.setEnabled(true);
-//                    holder.PubBTN.setEnabled(true);
-//                    holder.PubABTN.setText("PubA");
-//                    holder.staticValue_thread=null;
-//                }
-//            }
-//        });
+        holder.PubABTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(holder.PubABTN.getText().equals("PubA"))
+                {
+                    if(holder.staticValue_thread==null)
+                    {
+                        holder.AsyncFlag=true;
+                        ArrayList<JsonPropertyMinimal> Message=MessageBoxAdapter.MessageControlList;
+
+                        //UI CONTROL
+                        holder.DelBTN.setEnabled(false);
+                        holder.PubBTN.setEnabled(false);
+                        SetEnableAllMessageBox_Name(holder,false);
+                        SetEnableAllMessageBox_Del(holder,false);
+                        holder.ADDMessageBox.setEnabled(false);
+                        holder.PubABTN.setText("Stop");
+                        //----------------------
+
+
+                        holder.staticValue_thread=new StaticValue_thread(MH.Topic,Message,client,MH);
+                        holder.staticValue_thread.start();
+                        ChangeMessageBoxesHint(holder,Message);
+                    }
+                    else
+                    {
+                        ArrayList<JsonPropertyMinimal> dataA=new ArrayList<>();
+                        for (JsonPropertyMinimal JPM:
+                                holder.staticValue_thread.data) {
+                            dataA.add(JPM.CreateDeepClone());
+                        }
+                        ArrayList<JsonPropertyMinimal> dataB=holder.DataB;
+                        holder.staticValue_thread.StopSign();
+
+                        //UI control
+                        holder.PubABTN.setEnabled(false);
+                        SetEnableAllMessageBox_Value(holder,false);
+                        ChangeMessageBoxesHint(holder,"StandBy while Data is being Shifted");
+                        //---------
+                        DynamicValueAtoB_thread dynamicValueAtoB_thread=new DynamicValueAtoB_thread(MH.Topic, dataA, dataB, client, MH, holder.staticValue_thread, holder, new CustomResponseCallBack() {
+                            @Override
+                            public void OnResponse(Object obj) {
+
+                                holder.staticValue_thread.start();
+                                ((Activity)mContext).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.d("testUIRUN", "UIchange_Running");
+                                        holder.PubABTN.setEnabled(true);
+                                        SetEnableAllMessageBox_Value(holder,true);
+                                        holder.PubABTN.setText("Stop");
+                                        ChangeMessageBoxesHint(holder,holder.staticValue_thread.data);
+                                    }
+                                });
+                            }
+                        });
+                        dynamicValueAtoB_thread.start();
+                    }
+                }
+                else
+                {
+                    holder.AsyncFlag=false;
+                    holder.staticValue_thread.StopSign();
+                    //UI control
+                    holder.DelBTN.setEnabled(true);
+                    holder.PubBTN.setEnabled(true);
+                    SetEnableAllMessageBox_Name(holder,true);
+                    SetEnableAllMessageBox_Del(holder,true);
+                    holder.ADDMessageBox.setEnabled(true);
+                    holder.PubABTN.setText("PubA");
+                    //----------------
+                    holder.staticValue_thread=null;
+                }
+            }
+        });
 //        holder.inputMessage.addTextChangedListener(new TextWatcher() {
 //            @Override
 //            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -205,6 +263,56 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
 //            public void afterTextChanged(Editable s) {
 //            }
 //        });
+    }
+    private void ResetMessageBoxesState(MessageViewHolder holder)
+    {
+        for (int i=0;i<MessageBoxAdapter.getItemCount();i++)
+        {
+            MessageBox_RecyclerviewAdapter.MessageBoxViewHolder VH=(MessageBox_RecyclerviewAdapter.MessageBoxViewHolder) holder.messageBoxes.findViewHolderForAdapterPosition(i);
+            MessageBoxAdapter.State1(VH);
+        }
+    }
+    public  void SetEnableAllMessageBox_Name(MessageViewHolder holder, boolean mode)
+    {
+        for (int i=0;i<MessageBoxAdapter.getItemCount();i++)
+        {
+            MessageBox_RecyclerviewAdapter.MessageBoxViewHolder VH=(MessageBox_RecyclerviewAdapter.MessageBoxViewHolder) holder.messageBoxes.findViewHolderForAdapterPosition(i);
+            MessageBoxAdapter.SetNameBoxEnable(VH,mode);
+        }
+    }
+    public  void SetEnableAllMessageBox_Value(MessageViewHolder holder, boolean mode)
+    {
+        for (int i=0;i<MessageBoxAdapter.getItemCount();i++)
+        {
+            MessageBox_RecyclerviewAdapter.MessageBoxViewHolder VH=(MessageBox_RecyclerviewAdapter.MessageBoxViewHolder) holder.messageBoxes.findViewHolderForAdapterPosition(i);
+            MessageBoxAdapter.SetValueBoxEnable(VH,mode);
+        }
+    }
+    public  void SetEnableAllMessageBox_Del(MessageViewHolder holder, boolean mode)
+    {
+        for (int i=0;i<MessageBoxAdapter.getItemCount();i++)
+        {
+            MessageBox_RecyclerviewAdapter.MessageBoxViewHolder VH=(MessageBox_RecyclerviewAdapter.MessageBoxViewHolder) holder.messageBoxes.findViewHolderForAdapterPosition(i);
+            MessageBoxAdapter.SetDelButtonEnable(VH,mode);
+        }
+    }
+    private void ChangeMessageBoxesHint(MessageViewHolder holder, String changeTo)
+    {
+        for (int i=0;i<MessageBoxAdapter.getItemCount();i++)
+        {
+            MessageBox_RecyclerviewAdapter.MessageBoxViewHolder VH=(MessageBox_RecyclerviewAdapter.MessageBoxViewHolder) holder.messageBoxes.findViewHolderForAdapterPosition(i);
+            if(changeTo.equals(""))MessageBoxAdapter.ChangeHintToLastValue(VH);
+            else MessageBoxAdapter.ChangeHintToString(VH,changeTo);
+        }
+    }
+    private void ChangeMessageBoxesHint(MessageViewHolder holder, ArrayList<JsonPropertyMinimal> changeTo)
+    {
+        for (int i=0;i<MessageBoxAdapter.getItemCount();i++)
+        {
+            MessageBox_RecyclerviewAdapter.MessageBoxViewHolder VH=(MessageBox_RecyclerviewAdapter.MessageBoxViewHolder) holder.messageBoxes.findViewHolderForAdapterPosition(i);
+            JsonPropertyMinimal temp= changeTo.get(i);
+            MessageBoxAdapter.ChangeHintToJsonMinimal(VH,temp);
+        }
     }
 
     @Override
@@ -235,6 +343,14 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
         holder.PubBTN.setVisibility(View.GONE);
         holder.PubABTN.setVisibility(View.GONE);
         holder.ADDMessageBox.setVisibility(View.GONE);
+//        while(!MessageBoxAdapter.MessageControlList.isEmpty())
+//        {
+//            View viewToRemove = holder.messageBoxes.getChildAt(0);
+//            holder.messageBoxes.removeView(viewToRemove);
+//            MessageBoxAdapter.MessageControlList.remove(0);
+//            MessageBoxAdapter.notifyItemRemoved(0);
+//        }
+//        MessageBoxAdapter=null;
     }
 
     public class MessageViewHolder extends RecyclerView.ViewHolder {
@@ -243,6 +359,7 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
         Button PubBTN, DelBTN, LockTopicBTN,PubABTN,ADDMessageBox;
         StaticValue_thread staticValue_thread;
         boolean AsyncFlag;
+        ArrayList<JsonPropertyMinimal> DataB;
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
             TopicTitle=itemView.findViewById(R.id.Card_TopicBox);
@@ -257,11 +374,13 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
     }
     @Override
     public void OnResponse(Object obj) {
-        int pos=MessageBoxAdapter.CurrentMessageBox;
-        if(pos!=-1){
-            MessageBoxAdapter.MessageControlList.remove(pos);
-            MessageBoxAdapter.notifyItemRemoved(pos);
+        if(obj==null)
+        {
+            int pos=MessageBoxAdapter.CurrentMessageBox;
+            if(pos!=-1){
+                MessageBoxAdapter.MessageControlList.remove(pos);
+                MessageBoxAdapter.notifyItemRemoved(pos);
+            }
         }
-
     }
 }

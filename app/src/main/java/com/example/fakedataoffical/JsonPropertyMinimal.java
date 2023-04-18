@@ -8,4 +8,8 @@ public class JsonPropertyMinimal {
         this.NAME=name;
         this.VALUE=value;
     }
+    public JsonPropertyMinimal CreateDeepClone()
+    {
+        return new JsonPropertyMinimal(this.NAME,this.VALUE);
+    }
 }

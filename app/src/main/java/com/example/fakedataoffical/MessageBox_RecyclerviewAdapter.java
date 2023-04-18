@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,27 +16,72 @@ import java.util.ArrayList;
 
 public class MessageBox_RecyclerviewAdapter extends RecyclerView.Adapter<MessageBox_RecyclerviewAdapter.MessageBoxViewHolder> {
     Context mContext;
-    CustomResponseCallBack CR;
+    CustomResponseCallBack CR_Del, CRTC;
     public ArrayList<JsonPropertyMinimal> MessageControlList;
     public int CurrentMessageBox;
-    public MessageBox_RecyclerviewAdapter(Context context,CustomResponseCallBack cr)
+    public MessageBox_RecyclerviewAdapter(Context context,CustomResponseCallBack crdel,CustomResponseCallBack crTC)
     {
         this.mContext=context;
-        this.CR=cr;
+        this.CR_Del = crdel;
+        this.CRTC =crTC;
         this.MessageControlList =new ArrayList<>();
     }
     public void addMessageBox()
     {
         this.MessageControlList.add(new JsonPropertyMinimal("",""));
-        notifyDataSetChanged();
+        notifyItemInserted(getItemCount());
     }
     public void State1(MessageBoxViewHolder holder)
     {
-        holder.MessageBox_NAME.setText("");
-        holder.MessageBox_NAME.setHint("Name");
-        holder.MessageBox_VALUE.setText("");
-        holder.MessageBox_VALUE.setHint("Value");
+        if(holder!=null)
+        {
+            holder.MessageBox_NAME.setText("");
+            holder.MessageBox_NAME.setHint("Name");
+            holder.MessageBox_VALUE.setText("");
+            holder.MessageBox_VALUE.setHint("Value");
+        }
     }
+    public void ChangeHintToLastValue(MessageBoxViewHolder holder)
+    {
+        if(holder!=null)
+        {
+            if(!MessageControlList.get(holder.getAdapterPosition()).VALUE.equals(""))holder.MessageBox_VALUE.setHint(MessageControlList.get(holder.getAdapterPosition()).VALUE);
+            holder.MessageBox_VALUE.setText("");
+        }
+    }
+    public void ChangeHintToString(MessageBoxViewHolder holder,String newHint)
+    {
+        if(holder!=null)
+        {
+            holder.MessageBox_VALUE.setText("");
+            holder.MessageBox_VALUE.setHint(newHint);
+        }
+    }
+    public void ChangeHintToJsonMinimal(MessageBoxViewHolder holder,JsonPropertyMinimal newHint)
+    {
+        JsonPropertyMinimal NewHint= newHint.CreateDeepClone();
+        if(holder!=null)
+        {
+            if(!NewHint.NAME.equals(""))holder.MessageBox_NAME.setHint(NewHint.NAME);
+            holder.MessageBox_NAME.setText("");
+            if(!NewHint.VALUE.equals(""))holder.MessageBox_VALUE.setHint(NewHint.VALUE);
+            holder.MessageBox_VALUE.setText("");
+        }
+    }
+
+    public void SetNameBoxEnable(MessageBoxViewHolder holder,boolean mode)
+    {
+        holder.MessageBox_NAME.setEnabled(mode);
+    }
+    public void SetValueBoxEnable(MessageBoxViewHolder holder,boolean mode)
+    {
+        holder.MessageBox_VALUE.setEnabled(mode);
+    }
+    public void SetDelButtonEnable(MessageBoxViewHolder holder,boolean mode)
+    {
+        holder.MessageBox_DEL.setEnabled(mode);
+    }
+
     @NonNull
     @Override
     public MessageBoxViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -54,7 +98,7 @@ public class MessageBox_RecyclerviewAdapter extends RecyclerView.Adapter<Message
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                MessageControlList.get(holder.getAdapterPosition()).NAME=s.toString();
+                MessageControlList.get(holder.getAdapterPosition()).NAME=s.toString().trim();
             }
 
             @Override
@@ -70,7 +114,9 @@ public class MessageBox_RecyclerviewAdapter extends RecyclerView.Adapter<Message
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                MessageControlList.get(holder.getAdapterPosition()).VALUE=s.toString();
+                MessageControlList.get(holder.getAdapterPosition()).VALUE=s.toString().trim();
+                CRTC.OnResponse(null);
+
             }
 
             @Override
@@ -83,7 +129,7 @@ public class MessageBox_RecyclerviewAdapter extends RecyclerView.Adapter<Message
             public void onClick(View v) {
                 State1(holder);
                 CurrentMessageBox=holder.getAdapterPosition();
-                CR.OnResponse(null);
+                CR_Del.OnResponse(null);
             }
         });
     }
