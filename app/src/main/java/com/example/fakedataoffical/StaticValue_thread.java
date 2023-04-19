@@ -37,4 +37,9 @@ public class StaticValue_thread extends Thread{
     {
         this.flag=false;
     }
+
+    public StaticValue_thread CreateDeepClone()
+    {
+        return new StaticValue_thread(Topic,data,client,MH);
+    }
 }

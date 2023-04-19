@@ -209,8 +209,6 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
                         DynamicValueAtoB_thread dynamicValueAtoB_thread=new DynamicValueAtoB_thread(MH.Topic, dataA, dataB, client, MH, holder.staticValue_thread, holder, new CustomResponseCallBack() {
                             @Override
                             public void OnResponse(Object obj) {
-
-                                holder.staticValue_thread.start();
                                 ((Activity)mContext).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -221,6 +219,13 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
                                         ChangeMessageBoxesHint(holder,holder.staticValue_thread.data);
                                     }
                                 });
+                                try{
+                                    holder.staticValue_thread.start();
+                                }
+                                catch (Exception ex)
+                                {
+                                    holder.staticValue_thread.run();
+                                }
                             }
                         });
                         dynamicValueAtoB_thread.start();
