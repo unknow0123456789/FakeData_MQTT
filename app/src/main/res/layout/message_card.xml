@@ -10,6 +10,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/gray"
         >
         <EditText
             android:layout_width="wrap_content"
@@ -47,6 +48,7 @@
             android:id="@+id/Card_RecyclerMessageBox"
             android:layout_below="@id/Card_LockBTN"
             android:visibility="gone"
+            android:backgroundTint="@color/gray"
             ></androidx.recyclerview.widget.RecyclerView>
         <Button
             android:layout_width="wrap_content"
@@ -56,6 +58,7 @@
             android:id="@+id/Card_AddMessage"
             android:backgroundTint="@color/black"
             android:text="Add Message"
+            android:textColor="@color/white"
             android:visibility="gone"
             ></Button>
         <Button
