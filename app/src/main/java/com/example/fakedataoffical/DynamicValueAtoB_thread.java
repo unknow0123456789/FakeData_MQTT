@@ -71,6 +71,11 @@ public class DynamicValueAtoB_thread extends Thread{
             }
         }
         RunStatic.data=dataB;
+        //testing-----
+        StaticValue_thread newContinue=RunStatic.CreateDeepClone();
+        newContinue.data=dataB;
+        RunStatic=newContinue.CreateDeepClone();
+        //testing-----
         for(JsonPropertyMinimal JPM:dataB) Log.d("testDataB", JPM.NAME+" : "+JPM.VALUE);
         CR.OnResponse(null);
     }
