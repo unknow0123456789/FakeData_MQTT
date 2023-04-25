@@ -76,7 +76,14 @@ public class MQTTHandler {
         JsonObject newJson=new JsonObject();
         for (JsonPropertyMinimal jsonProperty:
              raw) {
-            newJson.addProperty(jsonProperty.NAME,jsonProperty.VALUE);
+            try{
+                float floatValue=Float.valueOf(jsonProperty.VALUE);
+                newJson.addProperty(jsonProperty.NAME,floatValue);
+            }
+            catch (Exception ex)
+            {
+                newJson.addProperty(jsonProperty.NAME,jsonProperty.VALUE);
+            }
         }
         return newJson;
     }
