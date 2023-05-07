@@ -3,6 +3,7 @@ package com.example.fakedataoffical;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class StaticValue_thread extends Thread{
 
@@ -31,6 +32,13 @@ public class StaticValue_thread extends Thread{
             for(JsonPropertyMinimal JPM : data)
                 Log.d("testDataA", JPM.NAME+" : "+JPM.VALUE);
             //MH.PublishedMessage.add(data);
+            try{
+                TimeUnit.SECONDS.sleep(5);
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
     }
     public void StopSign()
