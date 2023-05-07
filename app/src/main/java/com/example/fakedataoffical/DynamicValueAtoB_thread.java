@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class DynamicValueAtoB_thread extends Thread{
     String Topic;
@@ -35,6 +36,7 @@ public class DynamicValueAtoB_thread extends Thread{
     }
     public void run ()
     {
+        double ChangeStep=0.5;
         ArrayList<Double> dataToValueA=new ArrayList<>();
         for (JsonPropertyMinimal JPM:
              dataA) {
@@ -51,12 +53,12 @@ public class DynamicValueAtoB_thread extends Thread{
             {
                 if(AOverB(dataToValueA.get(i),dataToValueB.get(i)))
                 {
-                    if(dataToValueA.get(i)-dataToValueB.get(i)>0.1) dataToValueA.set(i,dataToValueA.get(i)-0.1);
+                    if(dataToValueA.get(i)-dataToValueB.get(i)>ChangeStep) dataToValueA.set(i,dataToValueA.get(i)-ChangeStep);
                     else dataToValueA.set(i,dataToValueB.get(i));
                 }
                 else
                 {
-                    if(dataToValueB.get(i)-dataToValueA.get(i)>0.1) dataToValueA.set(i,dataToValueA.get(i)+0.1);
+                    if(dataToValueB.get(i)-dataToValueA.get(i)>ChangeStep) dataToValueA.set(i,dataToValueA.get(i)+ChangeStep);
                     else dataToValueA.set(i,dataToValueB.get(i));
                 }
             }
@@ -65,7 +67,7 @@ public class DynamicValueAtoB_thread extends Thread{
             //MH.PublishedMessage.add(String.valueOf(dataToValueA));
             try
             {
-                sleep(100);
+                TimeUnit.SECONDS.sleep(5);
             }catch (Exception ex){
                 Log.e("SleepError", ex.getMessage());
             }

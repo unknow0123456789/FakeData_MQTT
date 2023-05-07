@@ -44,6 +44,12 @@ public class MainActivity extends AppCompatActivity implements CustomResponseCal
                     MainLayout.setVisibility(View.VISIBLE);
                     adapter.client=client;
                 }
+//                if(true)    //testOnly
+//                {
+//                    connectLayout.setVisibility(View.GONE);
+//                    MainLayout.setVisibility(View.VISIBLE);
+//                    adapter.client=client;
+//                }
             }
         });
         //Create RecyclerView and config
