@@ -54,6 +54,26 @@
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="@dimen/MessageBox_Margin"
+            >
+            <EditText
+                android:id="@+id/Message_ChangeRate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_shape"
+                android:backgroundTint="@color/white"
+                android:layout_centerInParent="true"
+                android:hint="CR(s)"
+                android:textSize="@dimen/MessageBoxTextSize"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray"
+                android:padding="5dp"
+                ></EditText>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1.5"
             android:background="@color/black"
             >

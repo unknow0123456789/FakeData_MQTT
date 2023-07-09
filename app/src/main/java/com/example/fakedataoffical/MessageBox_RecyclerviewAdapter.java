@@ -28,7 +28,7 @@ public class MessageBox_RecyclerviewAdapter extends RecyclerView.Adapter<Message
     }
     public void addMessageBox()
     {
-        this.MessageControlList.add(new JsonPropertyMinimal("",""));
+        this.MessageControlList.add(new JsonPropertyMinimal("","",0.0));
         notifyItemInserted(getItemCount());
     }
     public void State1(MessageBoxViewHolder holder)
@@ -39,6 +39,8 @@ public class MessageBox_RecyclerviewAdapter extends RecyclerView.Adapter<Message
             holder.MessageBox_NAME.setHint("Name");
             holder.MessageBox_VALUE.setText("");
             holder.MessageBox_VALUE.setHint("Value");
+            holder.MessageBox_ChangeRate.setText("");
+            holder.MessageBox_ChangeRate.setHint("CR(s)");
         }
     }
     public void ChangeHintToLastValue(MessageBoxViewHolder holder)
@@ -69,6 +71,10 @@ public class MessageBox_RecyclerviewAdapter extends RecyclerView.Adapter<Message
         }
     }
 
+    public void SetRateBoxEnable(MessageBoxViewHolder holder,boolean mode)
+    {
+        holder.MessageBox_ChangeRate.setEnabled(mode);
+    }
     public void SetNameBoxEnable(MessageBoxViewHolder holder,boolean mode)
     {
         holder.MessageBox_NAME.setEnabled(mode);
@@ -124,6 +130,22 @@ public class MessageBox_RecyclerviewAdapter extends RecyclerView.Adapter<Message
 
             }
         });
+        holder.MessageBox_ChangeRate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(!s.equals(""))MessageControlList.get(holder.getAdapterPosition()).ChangeRate=Double.valueOf(s.toString().trim());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         holder.MessageBox_DEL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,12 +161,13 @@ public class MessageBox_RecyclerviewAdapter extends RecyclerView.Adapter<Message
     }
 
     public class MessageBoxViewHolder  extends RecyclerView.ViewHolder{
-        EditText MessageBox_NAME,MessageBox_VALUE;
+        EditText MessageBox_NAME,MessageBox_VALUE,MessageBox_ChangeRate;
         Button MessageBox_DEL;
         public MessageBoxViewHolder(@NonNull View itemView) {
             super(itemView);
             MessageBox_NAME=itemView.findViewById(R.id.Message_Name);
             MessageBox_VALUE=itemView.findViewById(R.id.Message_Value);
+            MessageBox_ChangeRate=itemView.findViewById(R.id.Message_ChangeRate);
             MessageBox_DEL=itemView.findViewById(R.id.Message_Del);
         }
     }

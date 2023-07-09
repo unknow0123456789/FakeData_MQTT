@@ -148,7 +148,7 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
                     MH.PublishedMessage.add(
                             client.publish(MH.Topic, MessageFull)
                             );
-                    ResetMessageBoxesState(holder);
+                    //ResetMessageBoxesState(holder);
                 }
             });
             holder.DelBTN.setOnClickListener(new View.OnClickListener() {
@@ -204,6 +204,7 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
                         //UI control
                         holder.PubABTN.setEnabled(false);
                         SetEnableAllMessageBox_Value(holder,false);
+                        SetEnableAllMessageBox_ChangeRate(holder,false);
                         ChangeMessageBoxesHint(holder,"StandBy while Data is being Shifted");
                         //---------
                         DynamicValueAtoB_thread dynamicValueAtoB_thread=new DynamicValueAtoB_thread(MH.Topic, dataA, dataB, client, MH, holder.staticValue_thread, holder, new CustomResponseCallBack() {
@@ -215,6 +216,7 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
                                         Log.d("testUIRUN", "UIchange_Running");
                                         holder.PubABTN.setEnabled(true);
                                         SetEnableAllMessageBox_Value(holder,true);
+                                        SetEnableAllMessageBox_ChangeRate(holder,true);
                                         holder.PubABTN.setText("Stop");
                                         ChangeMessageBoxesHint(holder,holder.staticValue_thread.data);
                                     }
@@ -283,6 +285,14 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
         {
             MessageBox_RecyclerviewAdapter.MessageBoxViewHolder VH=(MessageBox_RecyclerviewAdapter.MessageBoxViewHolder) holder.messageBoxes.findViewHolderForAdapterPosition(i);
             MessageBoxAdapter.SetNameBoxEnable(VH,mode);
+        }
+    }
+    public void SetEnableAllMessageBox_ChangeRate(MessageViewHolder holder,boolean mode)
+    {
+        for(int i=0;i<MessageBoxAdapter.getItemCount();i++)
+        {
+            MessageBox_RecyclerviewAdapter.MessageBoxViewHolder VH=(MessageBox_RecyclerviewAdapter.MessageBoxViewHolder) holder.messageBoxes.findViewHolderForAdapterPosition(i);
+            MessageBoxAdapter.SetRateBoxEnable(VH,mode);
         }
     }
     public  void SetEnableAllMessageBox_Value(MessageViewHolder holder, boolean mode)

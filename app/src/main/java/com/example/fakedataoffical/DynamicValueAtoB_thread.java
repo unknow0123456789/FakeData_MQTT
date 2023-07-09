@@ -36,7 +36,6 @@ public class DynamicValueAtoB_thread extends Thread{
     }
     public void run ()
     {
-        double ChangeStep=0.5;
         ArrayList<Double> dataToValueA=new ArrayList<>();
         for (JsonPropertyMinimal JPM:
              dataA) {
@@ -51,6 +50,7 @@ public class DynamicValueAtoB_thread extends Thread{
         {
             for(int i=0;i<dataA.size();i++)
             {
+                double ChangeStep=dataB.get(i).ChangeRate;
                 if(AOverB(dataToValueA.get(i),dataToValueB.get(i)))
                 {
                     if(dataToValueA.get(i)-dataToValueB.get(i)>ChangeStep) dataToValueA.set(i,dataToValueA.get(i)-ChangeStep);
