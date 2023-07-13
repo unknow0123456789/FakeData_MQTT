@@ -138,7 +138,15 @@ public class MessageBox_RecyclerviewAdapter extends RecyclerView.Adapter<Message
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(!s.equals(""))MessageControlList.get(holder.getAdapterPosition()).ChangeRate=Double.valueOf(s.toString().trim());
+                try
+                {
+                    MessageControlList.get(holder.getAdapterPosition()).ChangeRate=Double.valueOf(s.toString().trim());
+                    CRTC.OnResponse(null);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
 
             @Override

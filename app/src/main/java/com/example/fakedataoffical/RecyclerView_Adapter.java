@@ -73,6 +73,10 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
                         {
                             CheckChangeFlag=true;
                         }
+                        if(SampleList.get(i).ChangeRate!=0.0&&SampleList.get(i).ChangeRate!=SampleFromStaticThreadAtI.ChangeRate)
+                        {
+                            CheckChangeFlag=true;
+                        }
                     }
                     if(CheckChangeFlag==true)
                     {
@@ -87,6 +91,10 @@ public class RecyclerView_Adapter extends RecyclerView.Adapter<RecyclerView_Adap
                             {
                                 SampleList.get(t).NAME=CloneListA.get(t).NAME;
                                 CloneListA.set(t,SampleList.get(t));
+                            }
+                            else if(SampleList.get(t).ChangeRate!=0.0)
+                            {
+                                CloneListA.get(t).ChangeRate=SampleList.get(t).ChangeRate;
                             }
                         }
                         holder.DataB=CloneListA;
