@@ -110,9 +110,8 @@ public class MainActivity extends AppCompatActivity implements CustomResponseCal
 
     /**
      * This Call back is use to delete an item in adapter IN THE RIGHT WAY.
-     * it's Important to know how recyclerView work when it's come to its holders and views : basically, when you delete something from the "Need to be displayed list" and call the notifyDataSetChanged() it'll active sequentially onBinding() method but it gonna do some weird ASS SHIT that will FUCK your data up, what you want to do is calling notifyItemRemoved(position) so that it refresh the recyclerview without calling the onBinding() method
+     * it's Important to know how recyclerView work when it's come to its holders and views : basically, when you delete something from the "Need to be displayed list" and call the notifyDataSetChanged() it'll active sequentially onBinding() method but it gonna do some weird ASS SHIT that will MESS your data up, what you want to do is calling notifyItemRemoved(position) so that it refresh the recyclerview without calling the onBinding() method
      * Now if your every individual view have 2 stage or more and u were planning to have them displayed at the first state when new created you might want to change the stage back to the 1st state after all the "delete protocol" we said above, this is duo to the fact that, recyclerview don't actually delete the view you just delete it just hide the view in some "invisible place", this is important because if you later add a new item in the list, the holderView that "you think" you just deleted before will be REUSED (NOT CREATE A NEW ONE) and there's nothing you can do about it, so if didn't change it back to the 1st state it will stay like it was when you last deleted it.
-     * THIS IS STUPID - ME LOSING ALL FUCKING DAY JUST TO KNOW THIS FACT. So please be sure to read this "how recyclerview work" or "why my fucking data being change or data being misDisplayed" before attempting to seek any help on OpenStack because NO FUCKING ONE will tell you this. LIKE NO ONE AT ALL :)
      * YOU ARE WELCOME - B(09/04/2023)
      * @param obj this do nothing :)
      */
